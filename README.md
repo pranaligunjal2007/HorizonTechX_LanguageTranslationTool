@@ -4,8 +4,7 @@ An AI-powered multilingual language translation web application built using **Py
 
 ## 🚀 Live Demo
 
-👉 https://age-translation.streamlit.app/
-
+👉 https://horizontechx-language-translation.streamlit.app/
 ## 💻 GitHub Repository
 
 👉 https://github.com/pranaligunjal2007/HorizonTechX_LanguageTranslationTool
