@@ -1,4 +1,3 @@
-
 import streamlit as st
 import requests
 
@@ -9,9 +8,12 @@ st.set_page_config(
     layout="centered"
 )
 
-# Title
+# Header
 st.title("🌐 AI Language Translation Tool")
-st.write("Translate text between multiple languages using an NLP translation API.")
+st.write(
+    "Translate text between multiple languages using "
+    "an NLP-based translation API."
+)
 
 # Supported languages
 languages = {
@@ -44,9 +46,9 @@ with col2:
         index=2
     )
 
-# Text input
+# Input
 text = st.text_area(
-    "Enter text to translate:",
+    "📝 Enter text to translate:",
     height=150,
     placeholder="Type your text here..."
 )
@@ -60,11 +62,25 @@ def translate_text(text, source, target):
         "langpair": f"{source}|{target}"
     }
 
-    response = requests.get(url, params=params, timeout=10)
+    response = requests.get(
+        url,
+        params=params,
+        timeout=15
+    )
+
     response.raise_for_status()
 
     data = response.json()
-    return data["responseData"]["translatedText"]
+
+    translated = data["responseData"]["translatedText"]
+
+    # Remove duplicated original text if API returns it
+    prefix = text.strip() + " - "
+
+    if translated.startswith(prefix):
+        translated = translated[len(prefix):]
+
+    return translated.strip()
 
 
 # Translate button
@@ -74,7 +90,7 @@ if st.button("🔄 Translate", use_container_width=True):
         st.warning("⚠️ Please enter some text first.")
 
     elif source_language == target_language:
-        st.info("Please select two different languages.")
+        st.info("ℹ️ Please select two different languages.")
 
     else:
         try:
@@ -85,16 +101,16 @@ if st.button("🔄 Translate", use_container_width=True):
                     languages[target_language]
                 )
 
-            st.success("Translation completed!")
+            st.success("✅ Translation completed!")
 
-            st.subheader("Translated Text")
-            st.text_area(
-                "Output",
-                translated,
-                height=150
+            st.subheader("📖 Translated Text")
+
+            # Output with built-in copy button
+            st.code(translated, language=None)
+
+            st.caption(
+                "Translation powered by MyMemory Translation API."
             )
-
-            st.caption("Translation powered by MyMemory Translation API.")
 
         except requests.exceptions.RequestException:
             st.error(
@@ -102,12 +118,14 @@ if st.button("🔄 Translate", use_container_width=True):
                 "Please try again."
             )
 
-        except Exception:
+        except Exception as e:
             st.error(
-                "❌ Something went wrong. Please check your input "
-                "and try again."
+                "❌ Something went wrong. Please try again."
             )
 
 # Footer
 st.divider()
-st.caption("Horizon TechX | AI + NLP Language Translation Tool")
+
+st.caption(
+    "Horizon TechX | AI + NLP Language Translation Tool"
+)
